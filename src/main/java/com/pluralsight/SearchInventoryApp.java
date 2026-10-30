@@ -31,6 +31,7 @@ public class SearchInventoryApp {
             switch (command) {
                 case 1 -> getInventory2();
                 case 2 -> getProductId();
+                case 3 -> getProductPriceRange();
                 case 5 -> menuApp = false;
             }
         }
@@ -143,6 +144,58 @@ public class SearchInventoryApp {
         }
     }
 
+
+    public static void getProductPriceRange( ) {
+
+        ArrayList<Product> products = new ArrayList<>();
+        Scanner input = new Scanner(System.in);
+
+        System.out.println("Enter product price range Ex Min:Max: ");
+
+        String prices = input.nextLine().trim();
+
+        String[] priceRange = prices.split(":");
+
+        int min = Integer.parseInt(priceRange[0]);
+        int max = Integer.parseInt(priceRange[1]);
+
+        try {
+
+
+            //?Creating reader to read my files
+            BufferedReader readInventory = new BufferedReader(new FileReader("inventory.csv"));
+
+            //* Variable to hold the products
+            String product;
+
+            System.out.println("=====These are the products in your range====\n");
+
+            while ((product = readInventory.readLine()) != null) {
+                //*Splitting the into parts
+                String[] productData = product.split("\\|");
+                //*Naming each split part
+                int productId = Integer.parseInt(productData[0]);
+                String productName = productData[1];
+                double productPrice = Double.parseDouble(productData[2]);
+
+                //?Creating the new product from the split parts and adding them to the ArrayList
+                products.add(new Product(productId, productName, productPrice));
+
+
+                if (min <= productPrice && productPrice <= max) {
+//                    System.out.println("=====These are the products in your range====\n");
+                    System.out.println("Product Id: " + productId + "\n");
+                    System.out.println("Product Name: " + productName + "\n");
+                    System.out.println("Product Price: " + productPrice + "\n");
+                }
+
+
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
         //!Creating  the menu
     public static int displayMenu(Scanner sC) {
