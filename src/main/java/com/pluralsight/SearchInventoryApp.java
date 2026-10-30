@@ -1,11 +1,7 @@
 package com.pluralsight;
 
-import java.io.BufferedReader;
+import java.io.*;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,10 +12,6 @@ public class SearchInventoryApp {
 
 
     public static void main(String[] args) {
-
-        ArrayList<Product> products = new ArrayList<>();
-
-
 
         Scanner input = new Scanner(System.in);
 
@@ -32,6 +24,7 @@ public class SearchInventoryApp {
                 case 1 -> getInventory2();
                 case 2 -> getProductId();
                 case 3 -> getProductPriceRange();
+                case 4 -> addProduct();
                 case 5 -> menuApp = false;
             }
         }
@@ -59,6 +52,7 @@ public class SearchInventoryApp {
 //
 //    }
 
+    //!Creating a method that pulling the inventory from a file
     public static void  getInventory2() {
 
         ArrayList<Product> products = new ArrayList<>();
@@ -99,12 +93,13 @@ public class SearchInventoryApp {
         }
     }
 
-
+    //!Creating a method that pulls the product by searching it Id
     public static void getProductId( ) {
 
         ArrayList<Product> products = new ArrayList<>();
         Scanner input = new Scanner(System.in);
 
+        //*asking for product id
         System.out.println("Enter product Id: ");
 
         int searchedProductId = input.nextInt();
@@ -140,24 +135,27 @@ public class SearchInventoryApp {
             }
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println("Error reading inventory.csv" + e.getMessage());
         }
     }
 
-
+    //!Creating a method that pulls all products in a price range
     public static void getProductPriceRange( ) {
 
         ArrayList<Product> products = new ArrayList<>();
         Scanner input = new Scanner(System.in);
 
+        //*Asking for there price range
         System.out.println("Enter product price range Ex Min:Max: ");
 
+        //*Storing the price range
         String prices = input.nextLine().trim();
 
+        //*Splitting the price range into a min and a max
         String[] priceRange = prices.split(":");
 
-        int min = Integer.parseInt(priceRange[0]);
-        int max = Integer.parseInt(priceRange[1]);
+        double min = Integer.parseInt(priceRange[0]);
+        double max = Integer.parseInt(priceRange[1]);
 
         try {
 
@@ -181,23 +179,66 @@ public class SearchInventoryApp {
                 //?Creating the new product from the split parts and adding them to the ArrayList
                 products.add(new Product(productId, productName, productPrice));
 
-
+                //*Print out products in range
                 if (min <= productPrice && productPrice <= max) {
 //                    System.out.println("=====These are the products in your range====\n");
                     System.out.println("Product Id: " + productId + "\n");
                     System.out.println("Product Name: " + productName + "\n");
-                    System.out.println("Product Price: " + productPrice + "\n");
+                    System.out.println("Product Price: " + productPrice + "\n\n");
                 }
 
 
             }
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println("Error reading inventory.csv" + e.getMessage());
         }
     }
 
-        //!Creating  the menu
+
+    //!Creating a method to add products to the inventory file
+    public static void addProduct( ) {
+
+        try (BufferedWriter productWriter = new BufferedWriter(new FileWriter("inventory.csv", true))){
+
+            Scanner input = new Scanner(System.in);
+
+            //*asking for product id
+            System.out.println("Enter product id: ");
+           //*Storing id
+            int productId = input.nextInt();
+
+            //?eating a line
+            input.nextLine();
+
+
+            //*Asking from product name
+            System.out.println("Enter product name: ");
+           //*Storing name
+            String productName = input.nextLine();
+
+            //*asking for product price
+            System.out.println("Enter product price: ");
+           //*Storing price
+            double productPrice = input.nextDouble();
+
+            //?Formatting product for the inventory file
+            String product = String.format("%d|%s|%.2f",  productId, productName, productPrice);
+            //*Adding it to the inventory file with a new line
+            productWriter.write(product);
+            productWriter.newLine();
+
+
+        }
+        catch (Exception e) {
+            System.out.println("Error reading inventory.csv" + e.getMessage());
+        }
+
+
+
+    }
+
+    //!Creating  the menu
     public static int displayMenu(Scanner sC) {
 
 
