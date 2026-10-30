@@ -5,6 +5,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Scanner;
 
 
 public class SearchInventoryApp {
@@ -12,7 +15,20 @@ public class SearchInventoryApp {
 
     public static void main(String[] args) {
 
-    getInventory2();
+        Scanner input = new Scanner(System.in);
+
+
+        boolean menuApp = true;
+        while (menuApp) {
+            int command = displayMenu(input);
+
+            switch (command) {
+                case 1 -> getInventory2();
+
+                case 5 -> menuApp = false;
+            }
+        }
+
 
 
     }
@@ -58,6 +74,7 @@ public class SearchInventoryApp {
                 //?Creating the new product from the split parts and adding them to the ArrayList
                 products.add(new Product(productId, productName, productPrice));
 
+                Collections.sort(products, Comparator.comparing(Product::getProductName));
 
                 //*Displaying the products
                 System.out.printf("Product Id: %s\nProduct Name: %s\nProduct Price: %s\n \n",
@@ -73,6 +90,33 @@ public class SearchInventoryApp {
         {
             System.out.println("Error reading inventory.csv" + e.getMessage());
         }
+    }
+
+
+
+    //!Creating  the menu
+    public static int displayMenu(Scanner sC) {
+
+
+        System.out.println("+++++++++++Menu+++++++++++");
+
+        System.out.println("What do you want to do?\n");
+
+        System.out.println(" 1 - List all products\n");
+
+        System.out.println(" 2 - Lookup a product by its id\n");
+
+        System.out.println(" 3 - Find all products withing a price range\n");
+
+        System.out.println(" 4 - Add a new product\n");
+
+        System.out.println(" 5 - Quit the application\n");
+
+        System.out.println("Enter your command: ");
+
+
+        //*To catch our command
+        return sC.nextInt();
     }
 
 }
