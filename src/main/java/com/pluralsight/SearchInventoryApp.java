@@ -2,8 +2,10 @@ package com.pluralsight;
 
 import java.io.BufferedReader;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,16 +17,20 @@ public class SearchInventoryApp {
 
     public static void main(String[] args) {
 
+        ArrayList<Product> products = new ArrayList<>();
+
+
+
         Scanner input = new Scanner(System.in);
 
-
+        //?Looping the menu screen
         boolean menuApp = true;
         while (menuApp) {
             int command = displayMenu(input);
-
+            //? Switch statement to take user to their selection
             switch (command) {
                 case 1 -> getInventory2();
-
+                case 2 -> getProductId();
                 case 5 -> menuApp = false;
             }
         }
@@ -93,8 +99,52 @@ public class SearchInventoryApp {
     }
 
 
+    public static void getProductId( ) {
 
-    //!Creating  the menu
+        ArrayList<Product> products = new ArrayList<>();
+        Scanner input = new Scanner(System.in);
+
+        System.out.println("Enter product Id: ");
+
+        int searchedProductId = input.nextInt();
+        try {
+
+
+            //?Creating reader to read my files
+            BufferedReader readInventory = new BufferedReader(new FileReader("inventory.csv"));
+
+            //* Variable to hold the products
+            String product;
+
+            while ((product = readInventory.readLine()) != null) {
+                //*Splitting the into parts
+                String[] productData = product.split("\\|");
+                //*Naming each split part
+                int productId = Integer.parseInt(productData[0]);
+                String productName = productData[1];
+                double productPrice = Double.parseDouble(productData[2]);
+
+                //?Creating the new product from the split parts and adding them to the ArrayList
+                products.add(new Product(productId, productName, productPrice));
+
+
+                if (searchedProductId == productId) {
+                    System.out.println("=====This is your product====\n");
+                    System.out.println("Product Id: " + productId + "\n");
+                    System.out.println("Product Name: " + productName + "\n");
+                    System.out.println("Product Price: " + productPrice + "\n");
+                }
+
+
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+        //!Creating  the menu
     public static int displayMenu(Scanner sC) {
 
 
